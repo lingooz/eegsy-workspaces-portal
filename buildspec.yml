@@ -12,7 +12,7 @@ containers:
                     - for i in ./lambda/*; do [ -d $i ] && cd "$i" && npm install && cd ../..; done
                     - apt update
                     - apt install jekyll -y
-                    - apt install python-pip python-dev build-essential -y
+                    - apt install python3-pip python3-dev build-essential -y
                     - pip install awscli
                     - aws cloudformation package --template $INPUT_FILE --s3-bucket $S3_ARTIFACT_BUCKET --output-template post-package.yaml
                     - jekyll build --source website/ --destination website/_site/
