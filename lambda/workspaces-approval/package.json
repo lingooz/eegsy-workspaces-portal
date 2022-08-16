@@ -1,0 +1,14 @@
+{
+  "name": "workspaces-approval",
+  "version": "1.0.0",
+  "description": "Approve WorkSpace buildup",
+  "main": "workspaces-approval.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Earl Gay",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "aws-sdk": "^2.176.0"
+  }
+}
