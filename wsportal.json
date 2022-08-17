@@ -24,7 +24,7 @@
         "ApproverEmail": {
             "Type": "String",
             "Description": "Email address that will receive WorkSpace Creation approval requests.",
-            "Default": "earl@eeg3.net"
+            "Default": "sonic.yang@schimatech.com.tw"
         },
         "DirectoryServicesId": {
             "Type": "String",
@@ -34,7 +34,7 @@
         "ApprovedDomain": {
             "Type": "String",
             "Description": "Approved email domain that can sign up for Portal access.",
-            "Default": "eeg3.net"
+            "Default": "schimatech.com.tw"
         }
     },
     "Resources": {
