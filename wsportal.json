@@ -19,7 +19,7 @@
         "PortalEmail": {
             "Type": "String",
             "Description": "Address from which emails will be sent from to approvers.",
-            "Default": "approval@roundtower.io"
+            "Default": "sonic.yang@schimatech.com.tw"
         },
         "ApproverEmail": {
             "Type": "String",
