@@ -8,6 +8,11 @@ var workspaces = new AWS.WorkSpaces({
     apiVersion: '2015-04-08'
 });
 
+// Create the WorkDocs service object
+var workdocs = new AWS.WorkDocs({
+    apiVersion: '2016-05-01'
+});
+
 // WorkSpaces must be tied to a Directory Service ID. Creation of the Directory Service is outside the scope of the portal.
 // By default, all WorkSpaces are configured with 'Auto Stop' mode with a usage timeout of 1 hour.
 var config = {
@@ -51,6 +56,19 @@ exports.handler = (event, context, callback) => {
             }
         }]
     };
+    var uparams = {
+      GivenName: 'Sonic01', /* required */
+      Password: 'worK)822', /* required */
+      Surname: 'Yang', /* required */
+      Username: 'sonic01', /* required */
+      EmailAddress: 'sonic.yang@schimatech.com.tw',
+      Type: 'WORKSPACESUSER',
+      TimeZoneId: 'UTC'
+    };
+    workdocs.createUser(uparams, function(err, data) {
+      if (err) console.log(err, err.stack); // an error occurred
+      else     console.log(data);           // successful response
+    });
 
     workspaces.createWorkspaces(params, function (err, data) {
         if (err) {
@@ -77,4 +95,5 @@ exports.handler = (event, context, callback) => {
             });
         }
     });
+
 };
