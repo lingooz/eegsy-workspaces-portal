@@ -41,11 +41,25 @@ exports.handler = (event, context, callback) => {
     console.log("Requester username: " + requesterUsername);
     console.log("Requester bundle: " + requesterBundle);
 
+    var today = new Date();
+    var time = today.getDate() + today.getHours() + today.getMinutes();
+    var username = 'sytest02' 
+    var uparams = {
+      GivenName: 'Sonic01', /* required */
+      Password: 'worK)822', /* required */
+      Surname: 'Yang', /* required */
+      Username: username, /* required */
+      EmailAddress: requesterEmail,
+      OrganizationId: config.Directory,
+      TimeZoneId: 'UTC'
+    };
+    console.log("username: " + username + time)
+
     var params = {
         Workspaces: [{
             BundleId: requesterBundle,
             DirectoryId: config.Directory,
-            UserName: requesterUsername,
+            UserName: username,
             Tags: [{
                 Key: 'SelfServiceManaged',
                 Value: requesterEmail
@@ -55,15 +69,6 @@ exports.handler = (event, context, callback) => {
                 RunningModeAutoStopTimeoutInMinutes: config.UsageTimeout
             }
         }]
-    };
-    var uparams = {
-      GivenName: 'Sonic01', /* required */
-      Password: 'worK)822', /* required */
-      Surname: 'Yang', /* required */
-      Username: 'sytest01', /* required */
-      EmailAddress: 'sonic.yang@schimatech.com.tw',
-      OrganizationId:  'd-936761cd1d',
-      TimeZoneId: 'UTC'
     };
     workdocs.createUser(uparams, function(err, data) {
       if (err) console.log(err, err.stack); // an error occurred
