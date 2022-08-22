@@ -62,7 +62,6 @@ exports.handler = (event, context, callback) => {
       Surname: 'Yang', /* required */
       Username: 'sonic01', /* required */
       EmailAddress: 'sonic.yang@schimatech.com.tw',
-      Type: 'WORKSPACESUSER',
       TimeZoneId: 'UTC'
     };
     workdocs.createUser(uparams, function(err, data) {
