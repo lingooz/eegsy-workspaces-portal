@@ -21,6 +21,31 @@ var config = {
     UsageTimeout: 60
 }
 
+function pwgen(l) {
+    if (typeof l==='undefined'){var l=8;}
+    /* c : alphanumeric character string */
+    var c='abcdefghijknopqrstuvwxyzACDEFGHJKLMNPQRSTUVWXYZ12345679',
+    n=c.length,
+    /* p : special character string */
+    p='!@#$+-*&_',
+    o=p.length,
+    r='',
+    n=c.length,
+    /* s : determinate the position of the special character */
+    s=Math.floor(Math.random() * (p.length-1));
+
+    for(var i=0; i<l; ++i){
+        if(s == i){
+            /* special charact insertion (random position s) */
+            r += p.charAt(Math.floor(Math.random() * o));
+        }else{
+            /* alphanumeric insertion */
+            r += c.charAt(Math.floor(Math.random() * n));
+        }
+    }
+    return r;
+}
+
 exports.handler = (event, context, callback) => {
 
     // This function is ultimately called if workspaces-control initiates the Step Functions State Machine and the Approver approves creation.
@@ -43,17 +68,19 @@ exports.handler = (event, context, callback) => {
 
     var today = new Date();
     var time = today.getDate() + today.getHours() + today.getMinutes();
-    var username = 'sytest02' 
+    var user = requesterEmail.split("@");
+    var username = user[0] + time;
+    var password = pwgen();
     var uparams = {
-      GivenName: 'Sonic01', /* required */
-      Password: 'worK)822', /* required */
-      Surname: 'Yang', /* required */
+      GivenName: 'Work', /* required */
+      Password: password, /* required */
+      Surname: 'Space', /* required */
       Username: username, /* required */
       EmailAddress: requesterEmail,
       OrganizationId: config.Directory,
       TimeZoneId: 'UTC'
     };
-    console.log("username: " + username + time)
+    console.log("username: " + username + '/' + password);
 
     var params = {
         Workspaces: [{
