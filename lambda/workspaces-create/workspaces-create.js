@@ -98,34 +98,35 @@ exports.handler = (event, context, callback) => {
         }]
     };
     workdocs.createUser(uparams, function(err, data) {
-      if (err) console.log(err, err.stack); // an error occurred
-      else     console.log(data);           // successful response
-    });
-
-    workspaces.createWorkspaces(params, function (err, data) {
-        if (err) {
-            console.log("Error: " + err);
-            callback(null, {
-                statusCode: 500,
-                body: JSON.stringify({
-                    Error: err,
-                }),
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                },
-            });
-        } else {
-            console.log("Result: " + JSON.stringify(data));
-            callback(null, {
-                "statusCode": 200,
-                "body": JSON.stringify({
-                    "action": "put",
-                    "requesterEmailAddress": requesterEmail,
-                    "requesterUsername": requesterUsername,
-                    "ws_status": "Approved"
-                })
-            });
-        }
+      if (err) {
+          console.log(err, err.stack); // an error occurred
+      } else {
+        console.log(data);           // successful response
+        workspaces.createWorkspaces(params, function (err, data) {
+            if (err) {
+                console.log("Error: " + err);
+                callback(null, {
+                    statusCode: 500,
+                    body: JSON.stringify({
+                        Error: err,
+                    }),
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                    },
+                });
+            } else {
+                console.log("Result: " + JSON.stringify(data));
+                callback(null, {
+                    "statusCode": 200,
+                    "body": JSON.stringify({
+                        "action": "put",
+                        "requesterEmailAddress": requesterEmail,
+                        "requesterUsername": requesterUsername,
+                        "ws_status": "Approved"
+                    })
+                });
+            }
+        });
     });
 
 };
