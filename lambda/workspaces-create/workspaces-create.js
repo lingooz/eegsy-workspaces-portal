@@ -67,14 +67,14 @@ exports.handler = (event, context, callback) => {
     console.log("Requester bundle: " + requesterBundle);
 
     var today = new Date();
-    var time = today.getDate() + today.getHours() + today.getMinutes();
+    var suffix = today.getDate().toString() + today.getHours().toString() + today.getMinutes().toString();
     var user = requesterEmail.split("@");
-    var username = user[0] + time;
+    var username = user[0] + suffix;
     var password = pwgen();
     var uparams = {
-      GivenName: 'Work', /* required */
+      GivenName: 'Workspace', /* required */
       Password: password, /* required */
-      Surname: 'Space', /* required */
+      Surname: user, /* required */
       Username: username, /* required */
       EmailAddress: requesterEmail,
       OrganizationId: config.Directory,
