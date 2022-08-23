@@ -97,23 +97,12 @@ exports.handler = (event, context, callback) => {
             }
         }]
     };
+
     workdocs.createUser(uparams, function(err, data) {
       if (err) {
           console.log(err, err.stack); // an error occurred
       } else {
         console.log(data);           // successful response
-    });
-    function sleep(milliseconds) {
-      var start = new Date().getTime();
-      while(1)
-      if ((new Date().getTime() - start) > milliseconds)
-        break;
-    }
-    while(1) {
-      console.log('sleep 3 second');
-      sleep(3000);
-    }
-
         workspaces.createWorkspaces(params, function (err, data) {
             if (err) {
                 console.log("Error: " + err);
@@ -139,5 +128,6 @@ exports.handler = (event, context, callback) => {
                 });
             }
         });
-
+      }
+    });
 };
