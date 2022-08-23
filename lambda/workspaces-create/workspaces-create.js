@@ -74,7 +74,7 @@ exports.handler = (event, context, callback) => {
     var uparams = {
       GivenName: 'Workspace', /* required */
       Password: password, /* required */
-      Surname: user, /* required */
+      Surname: user[0], /* required */
       Username: username, /* required */
       EmailAddress: requesterEmail,
       OrganizationId: config.Directory,
