@@ -526,23 +526,17 @@ exports.handler = (event, context, callback) => {
                 Owner: null
             },
             function () {
-                getBundles({
-                        Owner: null
-                    },
-                    function () {
-                        callback(null, {
-                            statusCode: 200,
-                            body: JSON.stringify({
-                                Result: bundleList
-                            }),
-                            headers: {
-                                "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
-                                "Access-Control-Allow-Methods": "GET,OPTIONS",
-                                "Access-Control-Allow-Origin": originURL
-                            }
-                        });
+                callback(null, {
+                    statusCode: 200,
+                    body: JSON.stringify({
+                        Result: bundleList
+                    }),
+                    headers: {
+                        "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                        "Access-Control-Allow-Methods": "GET,OPTIONS",
+                        "Access-Control-Allow-Origin": originURL
                     }
-                );
+                });
             }
         );
     } else {
