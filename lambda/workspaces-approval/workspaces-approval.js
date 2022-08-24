@@ -68,7 +68,11 @@ exports.handler = (event, context, callback) => {
                 // send email from SES. AWS Accounts cannot send email by default for security reasons. 
                 // More details: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/request-production-access.html
                 var tparams = {
-                    output: input.requesterEmailAddress + input.requesterUsername + input.requesterBundle,
+                    output: {
+                        requesterEmailAddress: input.requesterEmailAddress,
+                        requesterUsername: input.requesterUsername,
+                        requesterBundle: input.requesterBundle
+                    },
                     taskToken: data.taskToken
                 };
                 stepfunctions.sendTaskSuccess(tparams, function(err, data) {
