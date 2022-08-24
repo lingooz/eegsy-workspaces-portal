@@ -208,6 +208,7 @@ On the main page, the ability to request a WorkSpace should now be displayed. Re
 The user should receive an email with instructions on how to use their WorkSpace once it finishes provisioning. The user can also log back into the WorkSpaces Portal to try rebooting, rebuilding, or deleting the WorkSpace. Test the ability to perform an activity under WorkSpace Operations on the provisioned WorkSpace.
 
 If everything above works, the application deployed successfully.
+Change the NodeJS to 12.x
 
 ## Removal
 
