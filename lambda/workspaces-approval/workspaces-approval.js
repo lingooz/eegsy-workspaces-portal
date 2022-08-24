@@ -67,12 +67,13 @@ exports.handler = (event, context, callback) => {
                 // Amazon SES is used to send the email. It is required that the AWS account where this function lives is properly setup to 
                 // send email from SES. AWS Accounts cannot send email by default for security reasons. 
                 // More details: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/request-production-access.html
-                stepfunctions.sendTaskSuccess({taskToken: data.taskToken}, function(err, data){
-                  if (err){
-                    console.log(err);
-                  } else {
-                    console.log("Step function is succeeded");
-                  }
+                var tparams = {
+                    output: input.requesterEmailAddress + input.requesterUsername + input.requesterBundle,
+                    taskToken: data.taskToken
+                };
+                stepfunctions.sendTaskSuccess(tparams, function(err, data) {
+                    if (err) console.log(err, err.stack); // an error occurred
+                    else     console.log(data);           // successful response
                 });
                 ses.sendEmail(emailParams, function (err, data) {
                     if (err) {
