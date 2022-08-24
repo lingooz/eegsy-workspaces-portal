@@ -26,16 +26,18 @@ exports.handler = (event, context, callback) => {
 
     try { // Check see if it's #1
         var action = JSON.parse(event.body)["action"];
-        var username = JSON.parse(event.body)["requesterUsername"];
         var email = JSON.parse(event.body)["requesterEmailAddress"];
+        var user = email.split("@");
+        var username = user[0];
         var ws_status = JSON.parse(event.body)["ws_status"];
     } catch (err) {}
 
     if (action == undefined) { // Check to see if it's #2
         try {
             var action = event["action"];
-            var username = event["requesterUsername"];
             var email = event["requesterEmailAddress"];
+            var user = email.split("@");
+            var username = user[0];
             var ws_status = event["ws_status"];
         } catch (err) {}
     }

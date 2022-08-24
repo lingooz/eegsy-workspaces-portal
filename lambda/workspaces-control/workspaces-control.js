@@ -147,10 +147,14 @@ exports.handler = (event, context, callback) => {
             }
         });
     } else if (action == "acknowledge") {
+
+        var requesterEmail = event.requestContext.authorizer.claims.email;
+        var user = requesterEmail.split("@");
+        var requesterUsername = user[0];
         var payloadString = JSON.stringify({
             action: "put",
-            requesterEmailAddress: event.requestContext.authorizer.claims.email,
-            requesterUsername: JSON.parse(event.body)["username"],
+            requesterEmailAddress: requesterEmail,
+            requesterUsername: requesterUsername,
             ws_status: "Acknowledged"
         });
 
@@ -184,13 +188,17 @@ exports.handler = (event, context, callback) => {
         // the process ends. If the Approver approves, the next State Machine calls another Lambda function 'workspaces-create' that
         // actually handles creating the WorkSpace.
 
+        var requesterEmail = event.requestContext.authorizer.claims.email;
+        var user = requesterEmail.split("@");
+        var requesterUsername = user[0];
+
         var stepParams = {
             stateMachineArn: stateMachine,
             /* required */
             input: JSON.stringify({
                 action: "put",
-                requesterEmailAddress: event.requestContext.authorizer.claims.email,
-                requesterUsername: JSON.parse(event.body)["username"],
+                requesterEmailAddress: requesterEmail,
+                requesterUsername: requesterUsername,
                 requesterBundle: JSON.parse(event.body)["bundle"],
                 ws_status: "Requested"
             })

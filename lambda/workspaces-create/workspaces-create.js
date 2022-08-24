@@ -59,7 +59,8 @@ exports.handler = (event, context, callback) => {
     console.log("Received event: " + event);
 
     var requesterEmail = event.split(",")[0];
-    var requesterUsername = event.split(",")[1];
+    var user = requesterEmail.split("@");
+    var requesterUsername = user[0];
     var requesterBundle = event.split(",")[2];
 
     console.log("Requester email: " + requesterEmail);
@@ -68,13 +69,12 @@ exports.handler = (event, context, callback) => {
 
     var today = new Date();
     var suffix = today.getDate().toString() + today.getHours().toString() + today.getMinutes().toString();
-    var user = requesterEmail.split("@");
-    var username = user[0] + suffix;
+    var username = requesterUsername + suffix;
     var password = pwgen();
     var uparams = {
       GivenName: 'Workspace', /* required */
       Password: password, /* required */
-      Surname: user[0], /* required */
+      Surname: requesterUsername, /* required */
       Username: username, /* required */
       EmailAddress: requesterEmail,
       OrganizationId: config.Directory,
