@@ -136,7 +136,7 @@ exports.handler = (event, context, callback) => {
                     }
                   },
                   MessageBody: "workspace user information",
-                  QueueUrl: "sqsURL"
+                  QueueUrl: sqsURL
                 };
 
                 sqs.sendMessage(sqsParams, function(err, data) {
