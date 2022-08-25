@@ -13,6 +13,9 @@ var workdocs = new AWS.WorkDocs({
     apiVersion: '2016-05-01'
 });
 
+// Create the SQS service object
+sqs = new AWS.SQS({apiVersion: '2012-11-05'});
+
 // WorkSpaces must be tied to a Directory Service ID. Creation of the Directory Service is outside the scope of the portal.
 // By default, all WorkSpaces are configured with 'Auto Stop' mode with a usage timeout of 1 hour.
 var config = {
@@ -59,8 +62,7 @@ exports.handler = (event, context, callback) => {
     console.log("Received event: " + event);
 
     var requesterEmail = event.split(",")[0];
-    var user = requesterEmail.split("@");
-    var requesterUsername = user[0];
+    var requesterUsername =event.split(",")[1];
     var requesterBundle = event.split(",")[2];
 
     console.log("Requester email: " + requesterEmail);
@@ -97,7 +99,7 @@ exports.handler = (event, context, callback) => {
             }
         }]
     };
-
+    var sqsURL = "https://sqs.eu-west-1.amazonaws.com/420009094734/ws-info-sy"
     workdocs.createUser(uparams, function(err, data) {
       if (err) {
           console.log(err, err.stack); // an error occurred
@@ -117,6 +119,34 @@ exports.handler = (event, context, callback) => {
                 });
             } else {
                 console.log("Result: " + JSON.stringify(data));
+                var sqsParams = {
+                  DelaySeconds: 5,
+                  MessageAttributes: {
+                    "username": {
+                      DataType: "String",
+                      StringValue: username
+                    },
+                    "password": {
+                      DataType: "String",
+                      StringValue: password
+                    },
+                    "workspace-id": {
+                      DataType: "String",
+                      StringValue: data.PendingRequests[0].WorkspaceId
+                    }
+                  },
+                  MessageBody: "workspace user information",
+                  QueueUrl: "sqsURL"
+                };
+
+                sqs.sendMessage(sqsParams, function(err, data) {
+                  if (err) {
+                    console.log("Error", err);
+                  } else {
+                    console.log("Success", data.MessageId);
+                  }
+                });
+
                 callback(null, {
                     "statusCode": 200,
                     "body": JSON.stringify({
