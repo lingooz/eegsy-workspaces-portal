@@ -149,7 +149,7 @@ In the meantime, the API Gateway is built manually. To create the API Gateway ma
 32. Copy the `Invoke URL` (e.g. https://abcdefgh.execute-api.us-west-2.amazonaws.com/Prod).
 33. Paste the `Invoke URL` into `website/js/config.js` within `api.invokeUrl`.
 
-34. Change the image from ECR https://stackoverflow.com/questions/68925494/aws-cloudshell-unable-to-start-docker-service and https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html
+34. Change the image from ECR https://stackoverflow.com/questions/68925494/aws-cloudshell-unable-to-start-docker-service and https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html. **AIM** should be add on the code build role
 #### Update Web Config with Infrastructure Details
 
 The `config.js` file within `website/js/` needs to be updated so the site knows how to utilize the services (this is a one-time process). 
