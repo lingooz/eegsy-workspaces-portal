@@ -14,7 +14,7 @@ var workdocs = new AWS.WorkDocs({
 });
 
 // Create the SQS service object
-sqs = new AWS.SQS({apiVersion: '2012-11-05'});
+var sqs = new AWS.SQS({apiVersion: '2012-11-05'});
 
 // WorkSpaces must be tied to a Directory Service ID. Creation of the Directory Service is outside the scope of the portal.
 // By default, all WorkSpaces are configured with 'Auto Stop' mode with a usage timeout of 1 hour.
