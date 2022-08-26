@@ -49,6 +49,19 @@ function pwgen(l) {
     return r;
 }
 
+function get_registration_code(directory_id){
+    var params = {
+      DirectoryIds: [
+        directory_id
+      ],
+    };
+    var wd_info = workspaces.describeWorkspaceDirectories(params, function(err, data) {
+      if (err) console.log(err, err.stack); // an error occurred
+      else     console.log("Directory Info:" + data);           // successful response
+    });
+    return "12345";
+}
+
 function queue_write(u, p, i) {
     var sqsURL = process.env.SQS_URL || "https://sqs.eu-west-1.amazonaws.com/420009094734/ws-info-sy"
     var sqsParams = {
@@ -129,6 +142,7 @@ exports.handler = (event, context, callback) => {
             }
         }]
     };
+    get_registration_code(config.Directory);
     workdocs.createUser(uparams, function(err, data) {
       if (err) {
           console.log(err, err.stack); // an error occurred
