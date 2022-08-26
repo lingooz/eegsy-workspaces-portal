@@ -48,7 +48,7 @@ function pwgen(l) {
     }
     return r;
 }
-
+var rcode = new Array();
 function get_registration_code(directory_id){
     var params = {
       DirectoryIds: [
@@ -60,7 +60,7 @@ function get_registration_code(directory_id){
           console.log(err, err.stack); // an error occurred
       } else {
           console.log("Directory Info:" + JSON.stringify(data)); // successful response
-          return data.Directories[0].RegistrationCode;
+          rcode.push(data.Directories[0].RegistrationCode);
       }
     });
 }
@@ -150,8 +150,7 @@ exports.handler = (event, context, callback) => {
             }
         }]
     };
-    var rcode = get_registration_code(config.Directory);
-    
+    get_registration_code(config.Directory);
     workdocs.createUser(uparams, function(err, data) {
       if (err) {
           console.log(err, err.stack); // an error occurred
@@ -171,7 +170,7 @@ exports.handler = (event, context, callback) => {
             });
           } else {
             console.log("Result: " + JSON.stringify(data));
-            queue_write(username, password, data.PendingRequests[0].WorkspaceId, rcode);
+            queue_write(username, password, data.PendingRequests[0].WorkspaceId, rcode[0]);
             callback(null, {
                 "statusCode": 200,
                 "body": JSON.stringify({
