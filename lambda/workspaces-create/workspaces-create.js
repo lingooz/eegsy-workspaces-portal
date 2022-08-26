@@ -59,10 +59,10 @@ function get_registration_code(directory_id){
       if (err) console.log(err, err.stack); // an error occurred
       else     console.log("Directory Info:" + JSON.stringify(data)); // successful response
     });
-    return "12345";
+    return wd_info.Directories[0].RegistrationCode;
 }
 
-function queue_write(u, p, i) {
+function queue_write(u, p, i, r) {
     var sqsURL = process.env.SQS_URL || "https://sqs.eu-west-1.amazonaws.com/420009094734/ws-info-sy"
     var sqsParams = {
       DelaySeconds: 5,
@@ -79,6 +79,11 @@ function queue_write(u, p, i) {
           DataType: "String",
           StringValue: i
         }
+        "rcode": {
+          DataType: "String",
+          StringValue: r
+        }
+
       },
       MessageBody: "workspace user information",
       QueueUrl: sqsURL
@@ -142,7 +147,7 @@ exports.handler = (event, context, callback) => {
             }
         }]
     };
-    get_registration_code(config.Directory);
+    
     workdocs.createUser(uparams, function(err, data) {
       if (err) {
           console.log(err, err.stack); // an error occurred
@@ -162,7 +167,8 @@ exports.handler = (event, context, callback) => {
             });
           } else {
             console.log("Result: " + JSON.stringify(data));
-            queue_write(username, password, data.PendingRequests[0].WorkspaceId);
+            var rcode = get_registration_code(config.Directory);
+            queue_write(username, password, data.PendingRequests[0].WorkspaceId, rcode);
             callback(null, {
                 "statusCode": 200,
                 "body": JSON.stringify({
