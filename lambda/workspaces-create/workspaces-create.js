@@ -55,7 +55,7 @@ function get_registration_code(directory_id){
         directory_id
       ],
     };
-    var wd_info = workspaces.describeWorkspaceDirectories(params, function(err, data) {
+    workspaces.describeWorkspaceDirectories(params, function(err, data) {
       if (err) {
           console.log(err, err.stack); // an error occurred
       } else {
@@ -150,6 +150,7 @@ exports.handler = (event, context, callback) => {
             }
         }]
     };
+    var rcode = get_registration_code(config.Directory);
     
     workdocs.createUser(uparams, function(err, data) {
       if (err) {
@@ -170,7 +171,6 @@ exports.handler = (event, context, callback) => {
             });
           } else {
             console.log("Result: " + JSON.stringify(data));
-            var rcode = get_registration_code(config.Directory);
             queue_write(username, password, data.PendingRequests[0].WorkspaceId, rcode);
             callback(null, {
                 "statusCode": 200,
