@@ -78,7 +78,7 @@ function queue_write(u, p, i, r) {
         "workspace-id": {
           DataType: "String",
           StringValue: i
-        }
+        },
         "rcode": {
           DataType: "String",
           StringValue: r
