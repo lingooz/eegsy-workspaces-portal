@@ -56,10 +56,13 @@ function get_registration_code(directory_id){
       ],
     };
     var wd_info = workspaces.describeWorkspaceDirectories(params, function(err, data) {
-      if (err) console.log(err, err.stack); // an error occurred
-      else     console.log("Directory Info:" + JSON.stringify(data)); // successful response
+      if (err) {
+          console.log(err, err.stack); // an error occurred
+      } else {
+          console.log("Directory Info:" + JSON.stringify(data)); // successful response
+          return data.Directories[0].RegistrationCode;
+      }
     });
-    return wd_info.Directories[0].RegistrationCode;
 }
 
 function queue_write(u, p, i, r) {
