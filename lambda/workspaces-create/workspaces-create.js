@@ -57,7 +57,7 @@ function get_registration_code(directory_id){
     };
     var wd_info = workspaces.describeWorkspaceDirectories(params, function(err, data) {
       if (err) console.log(err, err.stack); // an error occurred
-      else     console.log("Directory Info:" + data);           // successful response
+      else     console.log("Directory Info:" + JSON.stringify(data)); // successful response
     });
     return "12345";
 }
