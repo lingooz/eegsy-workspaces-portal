@@ -49,6 +49,37 @@ function pwgen(l) {
     return r;
 }
 
+function queue_write(u, p, i) {
+    var sqsURL = process.env.SQS_URL || "https://sqs.eu-west-1.amazonaws.com/420009094734/ws-info-sy"
+    var sqsParams = {
+      DelaySeconds: 5,
+      MessageAttributes: {
+        "username": {
+          DataType: "String",
+          StringValue: u
+        },
+        "password": {
+          DataType: "String",
+          StringValue: p
+        },
+        "workspace-id": {
+          DataType: "String",
+          StringValue: i
+        }
+      },
+      MessageBody: "workspace user information",
+      QueueUrl: sqsURL
+    };
+
+    sqs.sendMessage(sqsParams, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+      } else {
+        console.log("Success", data.MessageId);
+      }
+    });
+}
+
 exports.handler = (event, context, callback) => {
 
     // This function is ultimately called if workspaces-control initiates the Step Functions State Machine and the Approver approves creation.
@@ -82,7 +113,6 @@ exports.handler = (event, context, callback) => {
       OrganizationId: config.Directory,
       TimeZoneId: 'UTC'
     };
-    console.log("username: " + username + '/' + password);
 
     var params = {
         Workspaces: [{
@@ -99,64 +129,36 @@ exports.handler = (event, context, callback) => {
             }
         }]
     };
-    var sqsURL = "https://sqs.eu-west-1.amazonaws.com/420009094734/ws-info-sy"
     workdocs.createUser(uparams, function(err, data) {
       if (err) {
           console.log(err, err.stack); // an error occurred
       } else {
         console.log(data);           // successful response
         workspaces.createWorkspaces(params, function (err, data) {
-            if (err) {
-                console.log("Error: " + err);
-                callback(null, {
-                    statusCode: 500,
-                    body: JSON.stringify({
-                        Error: err,
-                    }),
-                    headers: {
-                        'Access-Control-Allow-Origin': '*',
-                    },
-                });
-            } else {
-                console.log("Result: " + JSON.stringify(data));
-                var sqsParams = {
-                  DelaySeconds: 5,
-                  MessageAttributes: {
-                    "username": {
-                      DataType: "String",
-                      StringValue: username
-                    },
-                    "password": {
-                      DataType: "String",
-                      StringValue: password
-                    },
-                    "workspace-id": {
-                      DataType: "String",
-                      StringValue: data.PendingRequests[0].WorkspaceId
-                    }
-                  },
-                  MessageBody: "workspace user information",
-                  QueueUrl: sqsURL
-                };
-
-                sqs.sendMessage(sqsParams, function(err, data) {
-                  if (err) {
-                    console.log("Error", err);
-                  } else {
-                    console.log("Success", data.MessageId);
-                  }
-                });
-
-                callback(null, {
-                    "statusCode": 200,
-                    "body": JSON.stringify({
-                        "action": "put",
-                        "requesterEmailAddress": requesterEmail,
-                        "requesterUsername": requesterUsername,
-                        "ws_status": "Approved"
-                    })
-                });
-            }
+          if (err) {
+            console.log("Error: " + err);
+            callback(null, {
+                statusCode: 500,
+                body: JSON.stringify({
+                    Error: err,
+                }),
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                },
+            });
+          } else {
+            console.log("Result: " + JSON.stringify(data));
+            queue_write(username, password, data.PendingRequests[0].WorkspaceId);
+            callback(null, {
+                "statusCode": 200,
+                "body": JSON.stringify({
+                    "action": "put",
+                    "requesterEmailAddress": requesterEmail,
+                    "requesterUsername": requesterUsername,
+                    "ws_status": "Approved"
+                })
+            });
+          }
         });
       }
     });

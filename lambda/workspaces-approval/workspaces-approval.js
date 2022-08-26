@@ -76,6 +76,7 @@ exports.handler = (event, context, callback) => {
                     if (err) console.log(err, err.stack); // an error occurred
                     else     console.log(data);           // successful response
                 });
+                /*
                 ses.sendEmail(emailParams, function (err, data) {
                     if (err) {
                         console.log(err, err.stack);
@@ -85,6 +86,7 @@ exports.handler = (event, context, callback) => {
                         context.succeed('The email was successfully sent.');
                     }
                 });
+                */
                 
             }
         }
