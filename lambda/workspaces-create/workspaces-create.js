@@ -60,7 +60,7 @@ function get_registration_code(directory_id){
           console.log(err, err.stack); // an error occurred
       } else {
           console.log("Directory Info:" + JSON.stringify(data)); // successful response
-          rcode.push(data.Directories[0].RegistrationCode);
+          //rcode.push(data.Directories[0].RegistrationCode);
       }
     });
 }
