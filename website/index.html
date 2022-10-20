@@ -1,235 +1,107 @@
----
-title: WorkSpaces Self-Service
-layout: default
----
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Public Client Sample</title>
+  </head>
+  <body>
+    <h1>Public Client Sample</h1>
+    <button id="startButton">Start OAuth Flow</button>
+    <div id="result"></div>
+    <script>
+    const authorizeEndpoint = "https://ws-test.auth.eu-west-1.amazoncognito.com/oauth2/authorize";
+    const tokenEndpoint = "https://ws-test.auth.eu-west-1.amazoncognito.com/oauth2/token";
+    const clientId = "2th4dtbi0tu703960audv542sh";
+    const redirect_uri = "https://d3h829vyliilvy.cloudfront.net/index.html";
 
-<!-- Main jumbotron -->
-<div class="jumbotron">
-  <h1 class="display-4">
-    <strong>{{page.title}}</strong>
-  </h1>
+        if (window.location.search) {
+            var args = new URLSearchParams(window.location.search);
+            var code = args.get("code");
 
-  <p class="lead">
-    Request, Reboot, Rebuild, and Decommission your Amazon WorkSpace.
-  </p>
-  <!-- p
-  <p class="lead">
-    The documentation (i.e. setup instructions, modification details) and full source code for this template as well as the pipeline
-    that powers it is available within the GitHub repository.
-  </p>
-  <a href="https://github.com/eeg3/workspaces-portal" class="btn btn-outline-primary">View Source Code</a>
-  </p>
-  //-->
-</div>
+            if (code) {
+                var xhr = new XMLHttpRequest();
 
-<!-- Place alerts in this div. -->
-<div id="methodStatus">
-</div>
+                xhr.onload = function() {
+                    var response = xhr.response;
+                    var message;
 
-<!-- Show a loading div before AJAX call, and hide it after. -->
-<div id="loadDiv" class="row">
-  <div class="col-sm-12">
-    <img src="/images/ajax_loader_gray_32.gif">
-  </div>
-</div>
+                    if (xhr.status == 200) {
+                        message = "Access Token: " + response.access_token;
+                    }
+                    else {
+                        message = "Error: " + response.error_description + " (" + response.error + ")";
+                    }
 
-<!-- If no provisioned desktop exists for the user, show the request panel. -->
-<div class="row" id="desktopNoExist" hidden>
-    <div class="col-md-8 col-lg-6 mr-auto ml-auto">
-        <div class="card border-dark">
-            <div class="card-header bg-primary text-white">
-              Request WorkSpace
-            </div>
-            <div class="card-body">
-              <p class="card-text">
-                  <form id="requestWorkSpace">
-                      <div>
-                        <input type="hidden" value="NO-MATTER-WHAT-IS" id="reqUsername" class="form-control form-control-sm" placeholder="Directory Username" required>
+                    document.getElementById("result").innerHTML = message;
+                };
+                xhr.responseType = 'json';
+                xhr.open("POST", tokenEndpoint, true);
+                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                xhr.send(new URLSearchParams({
+                    client_id: clientId,
+                    code_verifier: window.sessionStorage.getItem("code_verifier"),
+                    grant_type: "authorization_code",
+                    redirect_uri: redirect_uri,
+                    code: code
+                }));
+            }
+        }
 
-                      </div>
-                      <div class="mt-1">
-                        <!-- Populated based on Bundles available. -->
-                        <select id="reqBundle" />
-                        </select>
-                      </div>
-                      <br>
-                      <div>
-                        <button id="reqButton" class="btn btn-primary" type="submit" name="submit">
-                          <span>Create WorkSpace</span>
-                          <i></i>
-                        </button>
-                      </div>
-                    </form>
-              </p>
-            </div>
-          </div>
-    </div>
-  </div>
+        document.getElementById("startButton").onclick = function() {
+            var codeVerifier = generateRandomString(64);
 
+            const challengeMethod = crypto.subtle ? "S256" : "plain"
 
-  <div class="row" id="desktopExist" hidden>
-      <div class="col-sm-9 mr-auto ml-auto">
-          <div class="card border-dark">
-              <div class="card-header bg-primary text-white">
-                WorkSpace Details
-              </div>
-              <div class="card-body">
-                <p class="card-text">
-                    <table id="workspacesTable" class="table table-bordered table-hover">
-                        <thead>
-                          <tr>
-                            <th>WorkSpace ID</th>
-                            <th>Username</th>
-                            <th>State</th>
-                            <th>Bundle ID</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td id="workspace-Id"></td>
-                            <td id="workspace-Username"></td>
-                            <td id="workspace-State"></td>
-                            <td id="workspace-Bundle"></td>
-                          </tr>
-                        </tbody>
-                      </table>
-                </p>
-              </div>
-            </div>
-      </div>
-      <div class="col-sm-3 mr-auto ml-auto">
-        <div class="card border-dark">
-          <div class="card-header bg-primary text-white">
-            WorkSpace Operations
-          </div>
-          <div class="card-body">
-                <form id="rebootWorkSpace" method="post" action="#">
-                    <button class="btn btn-sm btn-block btn-outline-primary" type="submit" name="submit">
-                      <span>Reboot WorkSpace</span>
-                      <i></i>
-                    </button>
-                  </form>
-                  <form id="rebuildWorkSpace" method="post" action="#">
-                    <button class="btn btn-sm btn-block btn-outline-primary" type="submit" name="submit">
-                      <span>Rebuild WorkSpace</span>
-                      <i></i>
-                    </button>
-                  </form>
-                  <form id="decommissionWorkSpace" method="post" action="#">
-                    <button class="btn btn-sm btn-block btn-outline-primary" type="submit" name="submit">
-                      <span>Delete WorkSpace</span>
-                      <i></i>
-                    </button>
-                  </form>
+            Promise.resolve()
+                .then(() => {
+                    if (challengeMethod === 'S256') {
+                        return generateCodeChallenge(codeVerifier)
+                    } else {
+                        return codeVerifier
+                    }
+                })
+                .then(function(codeChallenge) {
+                    window.sessionStorage.setItem("code_verifier", codeVerifier);
 
-          </div>
-        </div>
-      </div>
-    </div>
+                    var redirectUri = window.location.href.split('?')[0];
+                    var args = new URLSearchParams({
+                        response_type: "code",
+                        client_id: clientId,
+                        code_challenge_method: challengeMethod,
+                        code_challenge: codeChallenge,
+                        redirect_uri: redirect_uri
+                    });
+                window.location = authorizeEndpoint + "/?" + args;
+            });
+        }
 
-<!-- If a provisioned desktop does exist for the user, show the control panel for the desktop. -->
-<div class="row" id="desktopExist2" hidden>
-  <div class="col-sm-9">
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        <h3 class="panel-title">WorkSpace Details
-          <button id="reloadButton">
-            <i class="fa fa-refresh" aria-hidden="true"></i>
-          </button>
-          </i>
-        </h3>
-      </div>
-      <div class="panel-body">
-        <table id="workspacesTable" class="table table-bordered table-hover">
-          <thead>
-            <tr>
-              <th>WorkSpace ID</th>
-              <th>Username</th>
-              <th>State</th>
-              <th>Bundle ID</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td id="workspace-Id"></td>
-              <td id="workspace-Username"></td>
-              <td id="workspace-State"></td>
-              <td id="workspace-Bundle"></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-  <div class="col-sm-3">
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        <h3 class="panel-title">WorkSpace Operations</h3>
-      </div>
-      <div class="panel-body">
-        <form id="rebootWorkSpace" method="post" action="#">
-          <button id="submit" type="submit" name="submit">
-            <span>Reboot WorkSpace</span>
-            <i></i>
-          </button>
-        </form>
-        <br>
-        <form id="rebuildWorkSpace" method="post" action="#">
-          <button id="submit" type="submit" name="submit">
-            <span>Rebuild WorkSpace</span>
-            <i></i>
-          </button>
-        </form>
-        <br>
-        <form id="decommissionWorkSpace" method="post" action="#">
-          <button id="submit" type="submit" name="submit">
-            <span>Delete WorkSpace</span>
-            <i></i>
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+        async function generateCodeChallenge(codeVerifier) {
+            var digest = await crypto.subtle.digest("SHA-256",
+                new TextEncoder().encode(codeVerifier));
 
+            return btoa(String.fromCharCode(...new Uint8Array(digest)))
+                .replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_')
+        }
 
-<!-- WorkSpace Deletion Confirmation Modal -->
-<div class="modal" id="confirmDecommissionModal">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">WARNING: Delete WorkSpace</h5>
-          <button class="close" data-dismiss="modal">&times;</button>
-        </div>
-        <div class="modal-body">
-            <p>This will
-                <b>permanently</b> delete your WorkSpace. All data will be lost and unrecoverable!</p>
-        </div>
-        <div class="modal-footer">
-            <form id="confirmDecommissionWorkSpace" method="post" action="#">
-                <button id="submit" type="submit" name="submit" class="btn btn-danger">
-                  <span>Confirm Delete WorkSpace</span>
-                  <i></i>
-                </button>
-              </form>
-        </div>
-      </div>
-    </div>
-  </div>
+        function generateRandomString(length) {
+            var text = "";
+            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
+            for (var i = 0; i < length; i++) {
+                text += possible.charAt(Math.floor(Math.random() * possible.length));
+            }
 
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+            return text;
+        }
 
-<!-- Bootstrap JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-  crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-  crossorigin="anonymous"></script>
-
-<script src="js/vendor/aws-cognito-sdk.min.js"></script>
-<script src="js/vendor/amazon-cognito-identity.min.js"></script>
-
-<script src="js/config.js"></script>
-<script src="js/cognito-auth.js"></script>
-<script src="js/index.js"></script>
+        if (!crypto.subtle) {
+            document.writeln('<p>' +
+                    '<b>WARNING:</b> The script will fall back to using plain code challenge as crypto is not available.</p>' +
+                    '<p>Javascript crypto services require that this site is served in a <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts">secure context</a>; ' +
+                    'either from <b>(*.)localhost</b> or via <b>https</b>. </p>' +
+                    '<p> You can add an entry to /etc/hosts like "127.0.0.1 public-test-client.localhost" and reload the site from there, enable SSL using something like <a href="https://letsencrypt.org/">letsencypt</a>, or refer to this <a href="https://stackoverflow.com/questions/46468104/how-to-use-subtlecrypto-in-chrome-window-crypto-subtle-is-undefined">stackoverflow article</a> for more alternatives.</p>' +
+                    '<p>If Javascript crypto is available this message will disappear.</p>')
+        }
+    </script>
+  </body>
+</html>
