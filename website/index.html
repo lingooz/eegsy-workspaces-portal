@@ -35,7 +35,7 @@
                     document.getElementById("result").innerHTML = message;
                 };
                 xhr.responseType = 'json';
-                xhr.open("POST", authorizeEndpoint, true);
+                xhr.open("POST", tokenEndpoint, true);
                 xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                 xhr.send(new URLSearchParams({
                     client_id: clientId,
