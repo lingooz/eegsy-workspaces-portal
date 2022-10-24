@@ -60,7 +60,7 @@ var authToken;
                 $("#methodStatus").show();
             },
             success: function (data) {
-                $("#methodStatus").append('<div class="alert alert-success"><b>Success! WorkSpace request submitted...</b> This request must be approved before the WorkSpace will be created. An email has been sent to <b>' + _config.approval.email + '</b> to authorize this request. Once approved, the WorkSpace will be created automatically and an email will be sent to your email with instructions for access.</div>');
+                $("#methodStatus").append('<div class="alert alert-success"><b>Success! WorkSpace request submitted...</b>It will take about 25 mintues, Please do not clink the create button again. You may refresh the page for status update. the WorkSpace will be created automatically and an email will be sent to your email with instructions for access.</div>');
                 $("#methodStatus").show();
             }
         });
