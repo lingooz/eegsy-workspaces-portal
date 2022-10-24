@@ -76,6 +76,7 @@ layout: default
                     if (xhr.status == 200) {
                         message = "ID  Token: " + response.id_token;
                         window.sessionStorage.setItem("id_token", response.id_token);
+                        window.location.href = "https://sy416eeg3-serverless-template.s3.eu-west-1.amazonaws.com/index.html";
                     }
                     else {
                         message = "Error: " + response.error_description + " (" + response.error + ")";
