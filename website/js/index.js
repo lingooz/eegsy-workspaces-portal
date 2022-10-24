@@ -10,6 +10,7 @@ var authToken;
 
     // Check for an Authorization Token, and if one doesn't exist then redirect user to sign in.
     Dashboard.authToken.then(function setAuthToken(token) {
+        var token = window.sessionStorage.getItem("id_token"),
         if (token) {
             authToken = token;
         } else {
