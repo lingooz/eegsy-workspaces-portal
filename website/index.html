@@ -26,7 +26,7 @@
                     var message;
 
                     if (xhr.status == 200) {
-                        message = "Access Token: " + response.access_token;
+                        message = "ID Token: " + response.access_token;
                     }
                     else {
                         message = "Error: " + response.error_description + " (" + response.error + ")";
@@ -42,7 +42,7 @@
                     code_verifier: window.sessionStorage.getItem("code_verifier"),
                     grant_type: "authorization_code",
                     redirect_uri: redirect_uri,
-                    code: code
+                    code: token
                 }));
             }
         }
