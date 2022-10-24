@@ -26,7 +26,7 @@
                     var message;
 
                     if (xhr.status == 200) {
-                        message = "Access Token: " + response.access_token;
+                        message = "ID  Token: " + response.id_token;
                     }
                     else {
                         message = "Error: " + response.error_description + " (" + response.error + ")";
