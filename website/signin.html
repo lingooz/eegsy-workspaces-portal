@@ -119,6 +119,7 @@ layout: default
                         client_id: clientId,
                         code_challenge_method: challengeMethod,
                         code_challenge: codeChallenge,
+                        identity_provider: "Okta",
                         redirect_uri: redirect_uri
                     });
                 window.location = authorizeEndpoint + "/?" + args;
